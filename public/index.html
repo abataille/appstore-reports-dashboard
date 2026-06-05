@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>App Store Reports Dashboard</title>
+    <link rel="stylesheet" href="/styles.css?v=7" />
+  </head>
+  <body>
+    <main class="shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="mark">A</div>
+          <div>
+            <strong>Sales Trends</strong>
+            <span>Local App Store revenue vault</span>
+          </div>
+        </div>
+        <nav>
+          <button class="nav-item active" data-filter="all">Overview</button>
+          <button class="nav-item" data-filter="analytics">Analytics</button>
+          <button class="nav-item" data-filter="apps">Apps</button>
+          <button class="nav-item" data-filter="reports">Daily trend</button>
+          <button class="nav-item" data-filter="raw">Raw rows</button>
+          <button class="nav-item" data-filter="settings">Settings</button>
+        </nav>
+        <div class="secure-card">
+          <span class="dot" id="configDot"></span>
+          <div>
+            <strong id="configLabel">Checking credentials</strong>
+            <small>Keys stay on this machine.</small>
+          </div>
+        </div>
+      </aside>
+
+      <section class="content">
+        <header class="topbar">
+          <div>
+            <p class="muted">App Store Connect Sales & Trends + focused Analytics</p>
+            <h1>Sales & Analytics</h1>
+          </div>
+          <div class="actions">
+            <a class="ghost" href="/api/sales/export.csv">Export CSV</a>
+            <button class="secondary" id="syncAnalyticsButton">Sync Analytics</button>
+            <button id="syncButton">Sync Sales & Trends</button>
+          </div>
+        </header>
+
+        <section class="status-strip">
+          <div>
+            <span>Last ingest</span>
+            <strong id="lastIngest">Never</strong>
+          </div>
+          <div>
+            <span>Coverage</span>
+            <strong id="coverageRange">No data yet</strong>
+          </div>
+          <div>
+            <span>Downloaded reports</span>
+            <strong id="columnCount">0</strong>
+          </div>
+          <div>
+            <span>Sales rows</span>
+            <strong id="rowCount">0</strong>
+          </div>
+        </section>
+
+        <section class="sync-panel">
+          <div>
+            <span class="pulse" id="syncPulse"></span>
+            <div>
+              <strong id="syncMessage">Idle</strong>
+              <small id="syncDetail">No sales sync running.</small>
+            </div>
+          </div>
+          <div>
+            <span class="pulse" id="analyticsPulse"></span>
+            <div>
+              <strong id="analyticsMessage">Analytics idle</strong>
+              <small id="analyticsDetail">Impressions and product page views only.</small>
+            </div>
+          </div>
+          <a href="/api/logs" target="_blank" rel="noreferrer">Open log JSON</a>
+        </section>
+
+        <section class="kpis" id="kpis"></section>
+        <section class="analytics-kpis" id="analyticsKpis"></section>
+
+        <section class="settings-panel panel" id="settingsPanel">
+          <div class="panel-head">
+            <div>
+              <h2>Credentials</h2>
+              <p>Local-only settings saved to <code>.env</code>. Existing secrets are masked.</p>
+            </div>
+          </div>
+          <form id="settingsForm" class="settings-form">
+            <label>
+              Issuer ID
+              <input name="ASC_ISSUER_ID" placeholder="leave blank to keep existing" autocomplete="off" />
+            </label>
+            <label>
+              Key ID
+              <input name="ASC_KEY_ID" placeholder="leave blank to keep existing" autocomplete="off" />
+            </label>
+            <label>
+              Private key path
+              <input name="ASC_PRIVATE_KEY_PATH" placeholder="./AuthKey_XXXX.p8" autocomplete="off" />
+            </label>
+            <label>
+              Private key text
+              <textarea name="ASC_PRIVATE_KEY" placeholder="optional: paste .p8 contents; leave blank to keep existing"></textarea>
+            </label>
+            <label>
+              Vendor number
+              <input name="ASC_VENDOR_NUMBER" placeholder="leave blank to keep existing" autocomplete="off" />
+            </label>
+            <label>
+              Sales days
+              <input name="ASC_SALES_DAYS" placeholder="30" inputmode="numeric" />
+            </label>
+            <label>
+              USD rates
+              <input name="ASC_USD_RATES" placeholder="EUR:1.16,JPY:0.0063,CLP:0.0011" autocomplete="off" />
+            </label>
+            <label>
+              Analytics instance limit
+              <input name="ASC_ANALYTICS_INSTANCE_LIMIT" placeholder="2" inputmode="numeric" />
+            </label>
+            <button type="submit" id="saveSettingsButton">Save credentials</button>
+            <small id="settingsHint">Blank fields keep current values.</small>
+          </form>
+        </section>
+
+        <section class="grid">
+          <article class="panel analytics-panel">
+            <div class="panel-head">
+              <div>
+                <h2>App Store Analytics</h2>
+                <p>Only impressions, product page views, downloads, and conversion.</p>
+              </div>
+            </div>
+            <div class="app-list" id="analyticsApps"></div>
+          </article>
+
+          <article class="panel wide">
+            <div class="panel-head">
+              <div>
+                <h2>Daily units</h2>
+                <p>Downloaded Sales & Trends summary reports by date.</p>
+              </div>
+            </div>
+            <div class="coverage" id="coverage"></div>
+          </article>
+
+          <article class="panel wide">
+            <div class="panel-head">
+              <div>
+                <h2>Recent Sales & Trends rows</h2>
+                <p>Raw Summary Sales report rows from Apple.</p>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead id="tableHead"></thead>
+                <tbody id="tableBody"></tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Apps by sales</h2>
+                <p>Aggregated from Summary Sales report rows.</p>
+              </div>
+            </div>
+            <div class="app-list" id="apps"></div>
+          </article>
+        </section>
+      </section>
+    </main>
+
+    <div class="toast" id="toast"></div>
+    <script src="/app.js?v=25" type="module"></script>
+  </body>
+</html>
