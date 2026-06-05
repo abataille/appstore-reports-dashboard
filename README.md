@@ -2,6 +2,8 @@
 
 A local, dependency-free dashboard for pulling App Store Connect Sales & Trends reports into files on your machine and exploring them in a browser.
 
+![App Store Reports Dashboard screenshot with artificial sample data](docs/dashboard-screenshot.svg)
+
 ## What It Captures
 
 - Daily Summary Sales reports from `/v1/salesReports`

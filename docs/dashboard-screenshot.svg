@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="960" viewBox="0 0 1440 960" role="img" aria-labelledby="title desc">
+  <title id="title">App Store Reports Dashboard screenshot with artificial data</title>
+  <desc id="desc">A dark local dashboard showing App Store Sales and Analytics with artificial sample units, sales, proceeds, daily bars, analytics and recent rows.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#06101c"/>
+      <stop offset="0.5" stop-color="#071726"/>
+      <stop offset="1" stop-color="#0d1a2d"/>
+    </linearGradient>
+    <radialGradient id="glowA" cx="12%" cy="8%" r="45%">
+      <stop offset="0" stop-color="#77f2d2" stop-opacity="0.24"/>
+      <stop offset="1" stop-color="#77f2d2" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB" cx="82%" cy="0%" r="42%">
+      <stop offset="0" stop-color="#91b7ff" stop-opacity="0.24"/>
+      <stop offset="1" stop-color="#91b7ff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#77f2d2"/>
+      <stop offset="1" stop-color="#91b7ff"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="24" stdDeviation="30" flood-color="#000000" flood-opacity="0.34"/>
+    </filter>
+    <style>
+      .bg { fill: url(#bg); }
+      .panel { fill: rgba(15, 27, 47, 0.82); stroke: rgba(184, 201, 233, 0.16); stroke-width: 1; filter: url(#shadow); }
+      .panel-soft { fill: rgba(255,255,255,0.04); stroke: rgba(184, 201, 233, 0.14); stroke-width: 1; }
+      .text { fill: #edf4ff; font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .muted { fill: #8ea1bd; font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .small { font-size: 15px; }
+      .tiny { font-size: 12px; }
+      .label { font-size: 14px; fill: #8ea1bd; font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .title { font-size: 64px; font-weight: 850; letter-spacing: -4px; }
+      .h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.6px; }
+      .kpi { font-size: 32px; font-weight: 850; letter-spacing: -1.5px; }
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      .nav { fill: rgba(255,255,255,0.045); stroke: rgba(184, 201, 233, 0.14); }
+      .nav-active { fill: rgba(119,242,210,0.14); stroke: rgba(119,242,210,0.42); }
+      .bar-bg { fill: rgba(255,255,255,0.11); }
+      .bar { fill: url(#accent); }
+      .line { stroke: rgba(184, 201, 233, 0.14); stroke-width: 1; }
+    </style>
+  </defs>
+
+  <rect width="1440" height="960" class="bg"/>
+  <rect width="1440" height="960" fill="url(#glowA)"/>
+  <rect width="1440" height="960" fill="url(#glowB)"/>
+
+  <rect x="0" y="0" width="280" height="960" fill="rgba(6,14,27,0.78)" stroke="rgba(184,201,233,0.14)"/>
+  <rect x="30" y="32" width="44" height="44" rx="16" fill="url(#accent)"/>
+  <text x="52" y="61" text-anchor="middle" font-size="22" font-weight="900" fill="#06101c" font-family="Inter, sans-serif">A</text>
+  <text x="88" y="51" class="text" font-size="17" font-weight="800">Sales Trends</text>
+  <text x="88" y="70" class="muted tiny">Local App Store revenue vault</text>
+
+  <rect x="28" y="116" width="224" height="48" rx="16" class="nav-active"/>
+  <text x="48" y="146" class="text small" font-weight="750">Overview</text>
+  <rect x="28" y="174" width="224" height="48" rx="16" class="nav"/>
+  <text x="48" y="204" class="muted small">Analytics</text>
+  <rect x="28" y="232" width="224" height="48" rx="16" class="nav"/>
+  <text x="48" y="262" class="muted small">Apps</text>
+  <rect x="28" y="290" width="224" height="48" rx="16" class="nav"/>
+  <text x="48" y="320" class="muted small">Daily trend</text>
+  <rect x="28" y="348" width="224" height="48" rx="16" class="nav"/>
+  <text x="48" y="378" class="muted small">Raw rows</text>
+  <rect x="28" y="406" width="224" height="48" rx="16" class="nav"/>
+  <text x="48" y="436" class="muted small">Settings</text>
+
+  <rect x="28" y="846" width="224" height="78" rx="22" class="panel-soft"/>
+  <circle cx="51" cy="878" r="7" fill="#77f2d2"/>
+  <text x="70" y="876" class="text small" font-weight="800">Sales credentials configured</text>
+  <text x="70" y="897" class="muted tiny">Keys stay on this machine.</text>
+
+  <text x="320" y="56" class="muted small">App Store Connect Sales &amp; Trends + focused Analytics</text>
+  <text x="320" y="118" class="text title">Sales &amp; Analytics</text>
+  <rect x="1032" y="44" width="126" height="48" rx="16" class="panel-soft"/>
+  <text x="1095" y="74" text-anchor="middle" class="text small" font-weight="800">Export CSV</text>
+  <rect x="1170" y="44" width="136" height="48" rx="16" fill="rgba(119,242,210,0.15)" stroke="rgba(119,242,210,0.38)"/>
+  <text x="1238" y="74" text-anchor="middle" class="text small" font-weight="800">Sync Analytics</text>
+  <rect x="1318" y="44" width="92" height="48" rx="16" fill="rgba(119,242,210,0.15)" stroke="rgba(119,242,210,0.38)"/>
+  <text x="1364" y="74" text-anchor="middle" class="text small" font-weight="800">Sync</text>
+
+  <g transform="translate(320,150)">
+    <rect width="264" height="78" rx="24" class="panel"/>
+    <text x="22" y="30" class="label">Last ingest</text>
+    <text x="22" y="58" class="text" font-size="18" font-weight="850">Jun 5, 2026, 10:18</text>
+    <rect x="280" width="264" height="78" rx="24" class="panel"/>
+    <text x="302" y="30" class="label">Coverage</text>
+    <text x="302" y="58" class="text" font-size="18" font-weight="850">07/05/2026 – 05/06/2026</text>
+    <rect x="560" width="220" height="78" rx="24" class="panel"/>
+    <text x="582" y="30" class="label">Downloaded reports</text>
+    <text x="582" y="58" class="text" font-size="18" font-weight="850">25</text>
+    <rect x="796" width="220" height="78" rx="24" class="panel"/>
+    <text x="818" y="30" class="label">Sales rows</text>
+    <text x="818" y="58" class="text" font-size="18" font-weight="850">124</text>
+  </g>
+
+  <g transform="translate(320,244)">
+    <rect width="170" height="100" rx="24" class="panel"/>
+    <text x="20" y="34" class="label">App Units</text>
+    <text x="20" y="73" class="text kpi">63</text>
+    <rect x="184" width="170" height="100" rx="24" class="panel"/>
+    <text x="204" y="34" class="label">All Row Units</text>
+    <text x="204" y="73" class="text kpi">148</text>
+    <rect x="368" width="170" height="100" rx="24" class="panel"/>
+    <text x="388" y="34" class="label">Rows</text>
+    <text x="388" y="73" class="text kpi">124</text>
+    <rect x="552" width="170" height="100" rx="24" class="panel"/>
+    <text x="572" y="34" class="label">Reports</text>
+    <text x="572" y="73" class="text kpi">25</text>
+    <rect x="736" width="384" height="100" rx="24" class="panel"/>
+    <text x="758" y="34" class="label">Proceeds</text>
+    <text x="758" y="65" class="text" font-size="18" font-weight="850">€42.18 · ¥2,480 · CLP 4,920</text>
+    <text x="758" y="87" fill="#91b7ff" font-size="15" font-weight="850" font-family="Inter, sans-serif">≈ $63.94</text>
+    <line x1="934" y1="20" x2="934" y2="82" class="line"/>
+    <text x="956" y="34" class="label">Customer Sales</text>
+    <text x="956" y="65" class="text" font-size="18" font-weight="850">€59.22 · ¥3,200</text>
+    <text x="956" y="87" fill="#91b7ff" font-size="15" font-weight="850" font-family="Inter, sans-serif">≈ $88.11</text>
+  </g>
+
+  <g transform="translate(320,360)">
+    <rect width="718" height="334" rx="28" class="panel"/>
+    <text x="24" y="42" class="text h2">Daily units</text>
+    <text x="24" y="66" class="muted small">Calendar coverage with missing Apple reports marked.</text>
+    <g transform="translate(24,96)">
+      <text y="13" class="text tiny mono">05/06/2026</text><rect x="94" y="0" width="440" height="18" rx="9" class="bar-bg"/><text x="550" y="14" class="muted tiny">no report</text>
+      <text y="43" class="text tiny mono">04/06/2026</text><rect x="94" y="30" width="440" height="18" rx="9" class="bar-bg"/><text x="550" y="44" class="muted tiny">no report</text>
+      <text y="73" class="text tiny mono">03/06/2026</text><rect x="94" y="60" width="440" height="18" rx="9" class="bar-bg"/><text x="550" y="74" class="muted tiny">no report</text>
+      <text y="103" class="text tiny mono">02/06/2026</text><rect x="94" y="90" width="440" height="18" rx="9" class="bar-bg"/><rect x="94" y="90" width="110" height="18" rx="9" class="bar"/><text x="550" y="104" class="text tiny" font-weight="850">1</text>
+      <text y="133" class="text tiny mono">01/06/2026</text><rect x="94" y="120" width="440" height="18" rx="9" class="bar-bg"/><rect x="94" y="120" width="220" height="18" rx="9" class="bar"/><text x="550" y="134" class="text tiny" font-weight="850">2</text>
+      <text y="163" class="text tiny mono">31/05/2026</text><rect x="94" y="150" width="440" height="18" rx="9" class="bar-bg"/><rect x="94" y="150" width="110" height="18" rx="9" class="bar"/><text x="550" y="164" class="text tiny" font-weight="850">1</text>
+      <text y="193" class="text tiny mono">30/05/2026</text><rect x="94" y="180" width="440" height="18" rx="9" class="bar-bg"/><rect x="94" y="180" width="440" height="18" rx="9" class="bar"/><text x="550" y="194" class="text tiny" font-weight="850">4</text>
+    </g>
+  </g>
+
+  <g transform="translate(1054,360)">
+    <rect width="356" height="334" rx="28" class="panel"/>
+    <text x="24" y="42" class="text h2">App Store Analytics</text>
+    <text x="24" y="66" class="muted small">Artificial sample discovery metrics.</text>
+    <g transform="translate(24,94)">
+      <rect width="142" height="74" rx="18" class="panel-soft"/><text x="16" y="29" class="label">Impressions</text><text x="16" y="58" class="text" font-size="26" font-weight="850">18,420</text>
+      <rect x="158" width="142" height="74" rx="18" class="panel-soft"/><text x="174" y="29" class="label">Page Views</text><text x="174" y="58" class="text" font-size="26" font-weight="850">2,141</text>
+      <rect y="88" width="142" height="74" rx="18" class="panel-soft"/><text x="16" y="117" class="label">Downloads</text><text x="16" y="146" class="text" font-size="26" font-weight="850">312</text>
+      <rect x="158" y="88" width="142" height="74" rx="18" class="panel-soft"/><text x="174" y="117" class="label">Conversion</text><text x="174" y="146" class="text" font-size="26" font-weight="850">14.6%</text>
+      <text y="206" class="text small" font-weight="850">ThumbView</text><text x="2" y="229" class="muted tiny">6,240 impressions · 880 page views</text>
+      <text y="262" class="text small" font-weight="850">Meine Park Uhr</text><text x="2" y="285" class="muted tiny">3,930 impressions · 412 page views</text>
+    </g>
+  </g>
+
+  <g transform="translate(320,710)">
+    <rect width="1090" height="196" rx="28" class="panel"/>
+    <text x="24" y="42" class="text h2">Recent Sales &amp; Trends rows</text>
+    <text x="24" y="66" class="muted small">Artificial sample rows from Apple Summary Sales reports.</text>
+    <g transform="translate(24,92)">
+      <text x="0" y="0" class="label">Date</text><text x="120" y="0" class="label">Title</text><text x="360" y="0" class="label">Type</text><text x="480" y="0" class="label">Units</text><text x="590" y="0" class="label">Country</text><text x="720" y="0" class="label">Proceeds</text>
+      <line x1="0" y1="18" x2="1040" y2="18" class="line"/>
+      <text x="0" y="47" class="text tiny mono">02/06/2026</text><text x="120" y="47" class="text small">Meine Park Uhr</text><text x="360" y="47" class="muted small">1</text><text x="480" y="47" class="text small">1</text><text x="590" y="47" class="muted small">DE</text><text x="720" y="47" class="text small">€0.71</text>
+      <text x="0" y="82" class="text tiny mono">01/06/2026</text><text x="120" y="82" class="text small">ThumbView</text><text x="360" y="82" class="muted small">F1</text><text x="480" y="82" class="text small">2</text><text x="590" y="82" class="muted small">US</text><text x="720" y="82" class="text small">$1.42</text>
+    </g>
+  </g>
+</svg>
