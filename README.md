@@ -30,6 +30,8 @@ ASC_SALES_DAYS=30
 
 You can also use `ASC_PRIVATE_KEY` with escaped newlines instead of a file path.
 
+Alternatively, start the dashboard and open **Settings** in the left sidebar to add or change these values from the local UI. The Settings form writes to `.env`, masks existing secrets, and keeps blank fields unchanged.
+
 Find your vendor number in App Store Connect under **Payments and Financial Reports** or in Sales and Trends report settings. Sales & Trends endpoints require a Team API key with suitable access, such as Sales and Reports, Finance, Admin, or Account Holder.
 
 ## Run
@@ -45,6 +47,8 @@ http://localhost:4173
 ```
 
 Click **Sync Sales & Trends** to download recent daily Summary Sales reports for your vendor number.
+
+Use **Settings** to update App Store Connect credentials, vendor number, sync window, USD conversion rates, and Analytics instance limit without editing `.env` manually.
 
 ## Files
 
