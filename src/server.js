@@ -414,12 +414,20 @@ async function collectReportsForRequest(requestId) {
 async function collectInstancesForReport(reportId) {
   syncStatus.message = `Fetching instances for report ${reportId}`;
   await log(syncStatus.message);
-  const instances = (await collectPaginated(`/v1/analyticsReports/${reportId}/instances?limit=200`))
+  const sorted = (await collectPaginated(`/v1/analyticsReports/${reportId}/instances?limit=200`))
     .map(normalizeRecord)
     .sort((left, right) => {
       const leftKey = left.attributes?.processingDate || left.attributes?.startDate || left.attributes?.granularity || left.id;
       const rightKey = right.attributes?.processingDate || right.attributes?.startDate || right.attributes?.granularity || right.id;
       return String(rightKey).localeCompare(String(leftKey));
+    });
+  const seenGranularities = new Set();
+  const instances = sorted
+    .filter((instance) => {
+      const granularity = instance.attributes?.granularity || instance.id;
+      if (seenGranularities.has(granularity)) return false;
+      seenGranularities.add(granularity);
+      return true;
     })
     .slice(0, Math.max(1, analyticsInstanceLimit));
   await log(`Report ${reportId}: ${instances.length} downloadable instance(s)`);
@@ -691,6 +699,20 @@ async function syncSalesAndTrends() {
 }
 
 function summarize(rows, state) {
+  const newestInstances = new Map();
+  for (const instance of state.instances || []) {
+    const granularity = instance.attributes?.granularity || instance.instanceName || "UNKNOWN";
+    const key = `${instance.appId || ""}:${instance.reportId || ""}:${granularity}`;
+    const processingDate = instance.attributes?.processingDate || "";
+    const current = newestInstances.get(key);
+    if (!current || processingDate > current.processingDate) {
+      newestInstances.set(key, { id: instance.id, processingDate });
+    }
+  }
+  const newestInstanceIds = new Set([...newestInstances.values()].map((instance) => instance.id));
+  const effectiveRows = newestInstanceIds.size
+    ? rows.filter((row) => newestInstanceIds.has(row.instanceId))
+    : rows;
   const metrics = {};
   const byReport = {};
   const byApp = {};
@@ -703,20 +725,23 @@ function summarize(rows, state) {
     byApp: {}
   };
 
-  const metricFromRow = (data, patterns) => {
-    for (const [key, value] of Object.entries(data)) {
-      const normalized = key.toLowerCase().replace(/[^a-z0-9]+/g, " ");
-      if (patterns.some((pattern) => pattern.test(normalized))) return numeric(value);
-    }
-    return 0;
-  };
-
-  for (const row of rows) {
+  for (const row of effectiveRows) {
     byReport[row.reportName] = (byReport[row.reportName] || 0) + 1;
     byApp[row.appName] = (byApp[row.appName] || 0) + 1;
-    const impressions = metricFromRow(row.data, [/impression/]);
-    const productPageViews = metricFromRow(row.data, [/product page view/, /page view/]);
-    const downloads = metricFromRow(row.data, [/download/, /app unit/, /first.*download/]);
+    const count = numeric(row.data.Counts);
+    const impressions = row.reportName === "App Store Discovery and Engagement Standard"
+      && row.data.Event === "Impression"
+      ? count
+      : 0;
+    const productPageViews = row.reportName === "App Store Discovery and Engagement Standard"
+      && row.data.Event === "Page view"
+      && row.data["Page Type"] === "Product page"
+      ? count
+      : 0;
+    const downloads = row.reportName === "App Downloads Standard"
+      && row.data["Download Type"] === "First-time download"
+      ? count
+      : 0;
     analytics.impressions += impressions;
     analytics.productPageViews += productPageViews;
     analytics.downloads += downloads;
@@ -727,14 +752,20 @@ function summarize(rows, state) {
     analytics.byApp[row.appName].rows += 1;
     for (const [key, value] of Object.entries(row.data)) {
       discoveredColumns.add(key);
-      if (/impression|download|install|session|proceed|sale|crash|view|revenue|unit|subscriber|conversion|retention/i.test(key)) {
+      if (/counts|impression|download|install|session|proceed|sale|crash|view|revenue|unit|subscriber|conversion|retention/i.test(key)) {
         metrics[key] = (metrics[key] || 0) + numeric(value);
       }
     }
   }
 
+  analytics.impressions = Math.max(0, analytics.impressions);
+  analytics.productPageViews = Math.max(0, analytics.productPageViews);
+  analytics.downloads = Math.max(0, analytics.downloads);
   analytics.conversionRate = analytics.productPageViews ? analytics.downloads / analytics.productPageViews : 0;
   for (const app of Object.values(analytics.byApp)) {
+    app.impressions = Math.max(0, app.impressions);
+    app.productPageViews = Math.max(0, app.productPageViews);
+    app.downloads = Math.max(0, app.downloads);
     app.conversionRate = app.productPageViews ? app.downloads / app.productPageViews : 0;
   }
 
@@ -744,7 +775,7 @@ function summarize(rows, state) {
     reportCount: state.reports.length,
     instanceCount: state.instances.length,
     segmentCount: state.segments.length,
-    rowCount: rows.length,
+    rowCount: effectiveRows.length,
     metrics,
     byReport,
     byApp,
