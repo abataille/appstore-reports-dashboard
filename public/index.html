@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>App Store Reports Dashboard</title>
-    <link rel="stylesheet" href="/styles.css?v=7" />
+    <link rel="stylesheet" href="/styles.css?v=9" />
   </head>
   <body>
     <main class="shell">
@@ -133,18 +133,16 @@
 
         <section class="grid">
           <article class="panel analytics-panel">
-            <div class="panel-head">
-              <div>
-                <h2>App Store Analytics</h2>
-                <p id="analyticsRangeLabel">Only impressions, product page views, downloads, and conversion.</p>
-              </div>
+            <div class="analytics-card-head">
+              <h2>App Store Analytics</h2>
               <select id="analyticsRange" aria-label="Analytics date range">
                 <option value="7">Last 7 days</option>
                 <option value="30" selected>Last 30 days</option>
                 <option value="all">All downloaded</option>
               </select>
+              <p id="analyticsRangeLabel">No Analytics dates available.</p>
             </div>
-            <div class="app-list" id="analyticsApps"></div>
+            <div class="app-list scrollable-app-list" id="analyticsApps"></div>
           </article>
 
           <article class="panel wide">
@@ -160,7 +158,8 @@
           <article class="panel wide">
             <div class="panel-head">
               <div>
-                <h2>Recent Sales & Trends rows</h2>
+                <h2>Recent App Unit Rows</h2>
+                <p class="muted">Newest first. Uses the same first-time app unit product types as Daily Units.</p>
                 <p>Raw Summary Sales report rows from Apple.</p>
               </div>
             </div>
@@ -179,13 +178,13 @@
                 <p>Aggregated from Summary Sales report rows.</p>
               </div>
             </div>
-            <div class="app-list" id="apps"></div>
+            <div class="app-list scrollable-app-list" id="apps"></div>
           </article>
         </section>
       </section>
     </main>
 
     <div class="toast" id="toast"></div>
-    <script src="/app.js?v=26" type="module"></script>
+    <script src="/app.js?v=29" type="module"></script>
   </body>
 </html>

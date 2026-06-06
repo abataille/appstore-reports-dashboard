@@ -201,6 +201,10 @@ function renderApps() {
 function renderAnalytics() {
   const analytics = state.analyticsSummary?.analytics || {};
   const range = state.analyticsSummary?.analyticsRange || {};
+  const downloadCoverage = analytics.downloadCoverage || {};
+  const downloadsValue = downloadCoverage.complete
+    ? format(analytics.downloads || 0)
+    : "Unavailable";
   $("#analyticsRange").value = state.analyticsRange;
   $("#analyticsRangeLabel").textContent = range.startDate && range.endDate
     ? `${displayIsoDate(range.startDate)} – ${displayIsoDate(range.endDate)}`
@@ -208,8 +212,8 @@ function renderAnalytics() {
   const items = [
     ["Impressions", analytics.impressions || 0],
     ["Product Page Views", analytics.productPageViews || 0],
-    ["Downloads", analytics.downloads || 0],
-    ["Conversion", percent(analytics.conversionRate || 0)]
+    ["Downloads", downloadsValue],
+    ["Conversion", downloadCoverage.complete ? percent(analytics.conversionRate || 0) : "Unavailable"]
   ];
   $("#analyticsKpis").innerHTML = items.map(([label, value]) => `
     <div class="kpi">
@@ -223,13 +227,24 @@ function renderAnalytics() {
   $("#analyticsApps").innerHTML = apps.length ? apps.map(([app, value]) => `
     <div class="app-card">
       <strong>${app}</strong>
-      <span>${format(value.impressions || 0)} impressions · ${format(value.productPageViews || 0)} page views · ${format(value.downloads || 0)} downloads · ${percent(value.conversionRate || 0)} conversion</span>
+      <span>${format(value.impressions || 0)} impressions · ${format(value.productPageViews || 0)} page views · ${value.downloadRows ? `${format(value.downloads || 0)} downloads · ${percent(value.conversionRate || 0)} conversion` : "downloads unavailable"}</span>
     </div>
   `).join("") : `<p class="muted">No analytics rows yet. Click <code>Sync Analytics</code>; Apple may need time to prepare report segments.</p>`;
+  if (!downloadCoverage.complete) {
+    $("#analyticsApps").insertAdjacentHTML("afterbegin", `<p class="muted">Analytics are shown for ${format(apps.length)} apps. Apple’s separate download report is currently available for ${format(downloadCoverage.appCount || 0)} of ${format(downloadCoverage.expectedAppCount || 0)} apps, so Analytics Downloads and Conversion remain unavailable. Sales App Units remain available above.</p>`);
+  }
 }
 
 function renderTable() {
-  const rows = state.salesRows.slice(0, 120);
+  const appUnitProductTypes = new Set(["1", "1F", "1T", "1E", "1EP", "1EU", "F1"]);
+  const rows = state.salesRows
+    .filter((row) => appUnitProductTypes.has(String(row["Product Type Identifier"] || "").trim()))
+    .sort((left, right) => {
+      const leftDate = parseAppleDate(left.reportDate || left["Begin Date"] || left["Start Date"] || left["Report Date"]);
+      const rightDate = parseAppleDate(right.reportDate || right["Begin Date"] || right["Start Date"] || right["Report Date"]);
+      return (rightDate?.getTime() || 0) - (leftDate?.getTime() || 0);
+    })
+    .slice(0, 120);
   const preferred = ["reportDate", "Title", "SKU", "Apple Identifier", "Product Type Identifier", "Units", "Developer Proceeds", "Customer Price", "Country Code", "Currency of Proceeds"];
   const available = new Set(rows.flatMap((row) => Object.keys(row)));
   const columns = preferred.filter((column) => available.has(column));

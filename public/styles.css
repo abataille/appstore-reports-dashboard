@@ -308,6 +308,29 @@ h2 {
 .analytics-panel {
   grid-column: 2;
   grid-row: 1;
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.analytics-panel .scrollable-app-list {
+  min-height: 0;
+  max-height: 760px;
+}
+
+.analytics-card-head {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.analytics-card-head select {
+  width: 100%;
+  min-width: 0;
+}
+
+.analytics-card-head p {
+  font-size: 13px;
 }
 
 .panel {
@@ -444,6 +467,25 @@ select {
   gap: 12px;
 }
 
+.scrollable-app-list {
+  max-height: 460px;
+  padding-right: 8px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  align-content: start;
+  scrollbar-color: rgba(145, 183, 255, 0.55) transparent;
+  scrollbar-width: thin;
+}
+
+.scrollable-app-list::-webkit-scrollbar {
+  width: 7px;
+}
+
+.scrollable-app-list::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(145, 183, 255, 0.55);
+}
+
 .app-card {
   padding: 14px;
   border: 1px solid var(--line);
@@ -553,6 +595,10 @@ td {
 
   .settings-form {
     grid-template-columns: 1fr;
+  }
+
+  .analytics-panel .scrollable-app-list {
+    max-height: 460px;
   }
 
 }

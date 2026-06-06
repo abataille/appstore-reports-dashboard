@@ -736,8 +736,14 @@ function summarize(rows, state, range = "all") {
     productPageViews: 0,
     downloads: 0,
     conversionRate: 0,
+    downloadCoverage: {
+      appCount: 0,
+      expectedAppCount: state.apps.length,
+      complete: false
+    },
     byApp: {}
   };
+  const appsWithDownloadRows = new Set();
 
   for (const row of rangedRows) {
     byReport[row.reportName] = (byReport[row.reportName] || 0) + 1;
@@ -756,13 +762,15 @@ function summarize(rows, state, range = "all") {
       && row.data["Download Type"] === "First-time download"
       ? count
       : 0;
+    if (row.reportName === "App Downloads Standard") appsWithDownloadRows.add(row.appName);
     analytics.impressions += impressions;
     analytics.productPageViews += productPageViews;
     analytics.downloads += downloads;
-    analytics.byApp[row.appName] ||= { impressions: 0, productPageViews: 0, downloads: 0, rows: 0 };
+    analytics.byApp[row.appName] ||= { impressions: 0, productPageViews: 0, downloads: 0, downloadRows: 0, rows: 0 };
     analytics.byApp[row.appName].impressions += impressions;
     analytics.byApp[row.appName].productPageViews += productPageViews;
     analytics.byApp[row.appName].downloads += downloads;
+    if (row.reportName === "App Downloads Standard") analytics.byApp[row.appName].downloadRows += 1;
     analytics.byApp[row.appName].rows += 1;
     for (const [key, value] of Object.entries(row.data)) {
       discoveredColumns.add(key);
@@ -775,6 +783,8 @@ function summarize(rows, state, range = "all") {
   analytics.impressions = Math.max(0, analytics.impressions);
   analytics.productPageViews = Math.max(0, analytics.productPageViews);
   analytics.downloads = Math.max(0, analytics.downloads);
+  analytics.downloadCoverage.appCount = appsWithDownloadRows.size;
+  analytics.downloadCoverage.complete = state.apps.length > 0 && appsWithDownloadRows.size === state.apps.length;
   analytics.conversionRate = analytics.productPageViews ? analytics.downloads / analytics.productPageViews : 0;
   for (const app of Object.values(analytics.byApp)) {
     app.impressions = Math.max(0, app.impressions);
