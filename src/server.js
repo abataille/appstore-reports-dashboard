@@ -698,7 +698,7 @@ async function syncSalesAndTrends() {
   }
 }
 
-function summarize(rows, state) {
+function summarize(rows, state, range = "all") {
   const newestInstances = new Map();
   for (const instance of state.instances || []) {
     const granularity = instance.attributes?.granularity || instance.instanceName || "UNKNOWN";
@@ -713,6 +713,20 @@ function summarize(rows, state) {
   const effectiveRows = newestInstanceIds.size
     ? rows.filter((row) => newestInstanceIds.has(row.instanceId))
     : rows;
+  const datedRows = effectiveRows
+    .map((row) => ({ row, date: String(row.data?.Date || "") }))
+    .filter(({ date }) => /^\d{4}-\d{2}-\d{2}$/.test(date));
+  const latestDate = datedRows.map(({ date }) => date).sort().at(-1) || null;
+  const rangeDays = range === "7" ? 7 : range === "30" ? 30 : null;
+  let rangeStart = null;
+  if (latestDate && rangeDays) {
+    const start = new Date(`${latestDate}T00:00:00`);
+    start.setDate(start.getDate() - (rangeDays - 1));
+    rangeStart = start.toISOString().slice(0, 10);
+  }
+  const rangedRows = rangeStart
+    ? effectiveRows.filter((row) => String(row.data?.Date || "") >= rangeStart && String(row.data?.Date || "") <= latestDate)
+    : effectiveRows;
   const metrics = {};
   const byReport = {};
   const byApp = {};
@@ -725,7 +739,7 @@ function summarize(rows, state) {
     byApp: {}
   };
 
-  for (const row of effectiveRows) {
+  for (const row of rangedRows) {
     byReport[row.reportName] = (byReport[row.reportName] || 0) + 1;
     byApp[row.appName] = (byApp[row.appName] || 0) + 1;
     const count = numeric(row.data.Counts);
@@ -775,11 +789,16 @@ function summarize(rows, state) {
     reportCount: state.reports.length,
     instanceCount: state.instances.length,
     segmentCount: state.segments.length,
-    rowCount: effectiveRows.length,
+    rowCount: rangedRows.length,
     metrics,
     byReport,
     byApp,
     analytics,
+    analyticsRange: {
+      selection: range,
+      startDate: rangeStart || datedRows.map(({ date }) => date).sort()[0] || null,
+      endDate: latestDate
+    },
     columns: [...discoveredColumns].sort()
   };
 }
@@ -926,6 +945,13 @@ async function handleApi(request, response) {
     }
     if (url.pathname === "/api/settings" && request.method === "GET") {
       return sendJson(response, publicSettings(await readEnvValues()));
+    }
+    if (url.pathname === "/api/analytics/summary" && request.method === "GET") {
+      const state = await readState();
+      const range = ["7", "30", "all"].includes(url.searchParams.get("range"))
+        ? url.searchParams.get("range")
+        : "30";
+      return sendJson(response, summarize(state.rows, state, range));
     }
     if (url.pathname === "/api/settings" && request.method === "POST") {
       const body = JSON.parse(await readBody(request) || "{}");

@@ -136,8 +136,13 @@
             <div class="panel-head">
               <div>
                 <h2>App Store Analytics</h2>
-                <p>Only impressions, product page views, downloads, and conversion.</p>
+                <p id="analyticsRangeLabel">Only impressions, product page views, downloads, and conversion.</p>
               </div>
+              <select id="analyticsRange" aria-label="Analytics date range">
+                <option value="7">Last 7 days</option>
+                <option value="30" selected>Last 30 days</option>
+                <option value="all">All downloaded</option>
+              </select>
             </div>
             <div class="app-list" id="analyticsApps"></div>
           </article>
@@ -181,6 +186,6 @@
     </main>
 
     <div class="toast" id="toast"></div>
-    <script src="/app.js?v=25" type="module"></script>
+    <script src="/app.js?v=26" type="module"></script>
   </body>
 </html>
