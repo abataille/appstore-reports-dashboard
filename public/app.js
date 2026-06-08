@@ -43,7 +43,8 @@ function salesCoverageLabel() {
     .filter(Boolean)
     .sort((left, right) => left - right);
   if (!dates.length) return "No data yet";
-  const end = dates[dates.length - 1];
+  const end = new Date();
+  end.setHours(0, 0, 0, 0);
   const start = new Date(end);
   start.setDate(start.getDate() - 29);
   return `${displayIsoDate(isoDateKey(start))} – ${displayIsoDate(isoDateKey(end))}`;
@@ -160,12 +161,12 @@ function renderCoverage() {
   const byDate = state.status?.salesSummary?.byDate || {};
   const max = Math.max(1, ...Object.values(byDate).map((row) => row.units || 0));
   const source = Object.fromEntries(Object.entries(byDate).map(([date, value]) => [isoDateKey(parseAppleDate(date) || new Date(date)), value]));
-  const availableDates = Object.keys(source).sort();
-  const latestDate = parseAppleDate(availableDates[availableDates.length - 1]);
-  if (!latestDate) {
+  if (!Object.keys(source).length) {
     $("#coverage").innerHTML = `<p class="muted">No Sales & Trends rows yet. Add <code>ASC_VENDOR_NUMBER</code>, then sync.</p>`;
     return;
   }
+  const latestDate = new Date();
+  latestDate.setHours(0, 0, 0, 0);
   const rows = Array.from({ length: 30 }, (_, index) => {
     const date = new Date(latestDate);
     date.setHours(0, 0, 0, 0);
