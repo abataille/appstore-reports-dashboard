@@ -206,11 +206,11 @@ async function createJwt() {
 
 async function ascFetch(url, options = {}) {
   await sleep(requestDelayMs);
-  const token = await createJwt();
   const requestUrl = url.startsWith("http") ? url : `${apiBase}${url}`;
   let response;
 
   for (let attempt = 0; attempt < 6; attempt += 1) {
+    const token = await createJwt();
     response = await fetch(requestUrl, {
       ...options,
       headers: {
@@ -220,10 +220,14 @@ async function ascFetch(url, options = {}) {
       }
     });
 
-    if (response.status !== 429) break;
+    if (response.status !== 429 && response.status < 500) break;
+    if (attempt === 5) break;
+
     const retryAfter = Number(response.headers.get("retry-after") || 0);
     const waitMs = retryAfter > 0 ? retryAfter * 1000 : Math.min(45000, 3000 * 2 ** attempt);
-    syncStatus.message = `Rate limited by Apple. Waiting ${Math.round(waitMs / 1000)}s before retry.`;
+    syncStatus.message = response.status === 429
+      ? `Rate limited by Apple. Waiting ${Math.round(waitMs / 1000)}s before retry.`
+      : `Apple returned ${response.status}. Retrying in ${Math.round(waitMs / 1000)}s.`;
     await log(syncStatus.message);
     await sleep(waitMs);
   }
@@ -242,11 +246,11 @@ async function ascFetch(url, options = {}) {
 
 async function ascDownload(url, options = {}, status = syncStatus) {
   await sleep(requestDelayMs);
-  const token = await createJwt();
   const requestUrl = url.startsWith("http") ? url : `${apiBase}${url}`;
   let response;
 
   for (let attempt = 0; attempt < 6; attempt += 1) {
+    const token = await createJwt();
     response = await fetch(requestUrl, {
       ...options,
       headers: {
@@ -255,10 +259,14 @@ async function ascDownload(url, options = {}, status = syncStatus) {
       }
     });
 
-    if (response.status !== 429) break;
+    if (response.status !== 429 && response.status < 500) break;
+    if (attempt === 5) break;
+
     const retryAfter = Number(response.headers.get("retry-after") || 0);
     const waitMs = retryAfter > 0 ? retryAfter * 1000 : Math.min(45000, 3000 * 2 ** attempt);
-    status.message = `Rate limited by Apple. Waiting ${Math.round(waitMs / 1000)}s before retry.`;
+    status.message = response.status === 429
+      ? `Rate limited by Apple. Waiting ${Math.round(waitMs / 1000)}s before retry.`
+      : `Apple returned ${response.status}. Retrying in ${Math.round(waitMs / 1000)}s.`;
     await log(status.message);
     await sleep(waitMs);
   }
@@ -272,6 +280,10 @@ async function ascDownload(url, options = {}, status = syncStatus) {
   }
 
   return Buffer.from(await response.arrayBuffer());
+}
+
+function isTransientAppleError(error) {
+  return /App Store Connect API 5\d\d|Segment download 5\d\d/.test(String(error?.message || error));
 }
 
 async function readState() {
@@ -874,7 +886,15 @@ async function syncAll() {
           await persistPartial();
 
           for (const instance of instances) {
-            const segments = await collectSegmentsForInstance(instance.id);
+            let segments = [];
+            try {
+              segments = await collectSegmentsForInstance(instance.id);
+            } catch (error) {
+              if (!isTransientAppleError(error)) throw error;
+              await log(`${reportName}: skipped instance ${instance.id} because Apple returned a temporary server error.`);
+              await persistPartial();
+              continue;
+            }
             await log(`${reportName}: ${segments.length} segment(s)`);
 
             for (const segment of segments) {
@@ -888,7 +908,17 @@ async function syncAll() {
                 instanceId: instance.id,
                 instanceName: instance.attributes?.granularity || instance.attributes?.processingDate || instance.id
               };
-              const localPath = existing?.localPath || (await downloadSegment(segment, context));
+              let localPath = existing?.localPath;
+              if (!localPath) {
+                try {
+                  localPath = await downloadSegment(segment, context);
+                } catch (error) {
+                  if (!isTransientAppleError(error)) throw error;
+                  await log(`${reportName}: skipped segment ${segment.id} because Apple returned a temporary server error.`);
+                  await persistPartial();
+                  continue;
+                }
+              }
               if (localPath) {
                 segment.localPath = localPath;
                 newRows.push(...(await parseTsv(localPath, context, segment)));
